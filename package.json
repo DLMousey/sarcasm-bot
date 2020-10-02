@@ -4,6 +4,9 @@
     "description": "A Discord bot that adds sArCaSm to messages in the channel",
     "main": "bot.js",
     "author": "Tom 'Mousey' Lovelady <tom@deadlyllama.com>",
+    "scripts": {
+        "start": "node bot.js"
+    },
     "dependencies": {
         "discord.js": "^11.4.2",
         "winston": "^3.1.0"

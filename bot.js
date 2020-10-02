@@ -12,9 +12,19 @@ client.on("message", (message) => {
     const args = message.content.slice(botConfig.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
 
-    if(command !== 'mock') 
-        return;
+    switch (command) {
+        case 'mock':
+            mock(message, args);
+            break;
+        case 'clap':
+            clap(message, args);
+            break;
+        default:
+            return;
+    }    
+});
 
+function mock(message, args) {
     message.channel.fetchMessages()
     .then(messages => {
         const targetUserId = args[0].replace(/[^0-9]/g, '');
@@ -37,6 +47,28 @@ client.on("message", (message) => {
 
         message.channel.send(lastMessage.author + ' ' + newMessageParts.join(''));
     });
-});
+}
+
+function clap(message, args) {
+    message.channel.fetchMessages()
+    .then(messages => {
+        const targetUserId = args[0].replace(/[^0-9]/g, '');
+        const filteredMessages = messages.filter(m => m.author.id == targetUserId);
+
+        const lastMessage = filteredMessages.first();
+        const newMessageParts = [];
+        for (let i = 0; i < lastMessage.content.length; i++) {
+            if (lastMessage.content[i] == ' ') {
+                newMessageParts.push('👏');
+                continue;
+            }
+            
+                newMessageParts.push(lastMessage.content[i].toUpperCase());
+            
+            }
+
+        message.channel.send(lastMessage.author + ' ' + newMessageParts.join(''));
+    });
+}
 
 client.login(auth.token);
