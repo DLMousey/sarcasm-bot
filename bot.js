@@ -27,18 +27,23 @@ client.on("message", (message) => {
 function mock(message, args) {
     message.channel.fetchMessages()
     .then(messages => {
-        const targetUserId = args[0].replace(/[^0-9]/g, '');
-        const filteredMessages = messages.filter(m => m.author.id == targetUserId);
+        let filteredMessages;
+        try {
+            filteredMessages = messages.filter(m => m.author.id === getUserId(args));
+        } catch (err) {
+            message.channel.send(`${message.author} ${err.message}`);
+            return;
+        }
 
         const lastMessage = filteredMessages.first();
         const newMessageParts = [];
         for (let i = 0; i < lastMessage.content.length; i++) {
-            if (lastMessage.content[i] == ' ') {
+            if (lastMessage.content[i] === ' ') {
                 newMessageParts.push(' ');
                 continue;
             }
 
-            if (i % 2 == 0) {
+            if (i % 2 === 0) {
                 newMessageParts.push(lastMessage.content[i].toUpperCase());
             } else {
                 newMessageParts.push(lastMessage.content[i].toLowerCase());
@@ -52,13 +57,18 @@ function mock(message, args) {
 function clap(message, args) {
     message.channel.fetchMessages()
     .then(messages => {
-        const targetUserId = args[0].replace(/[^0-9]/g, '');
-        const filteredMessages = messages.filter(m => m.author.id == targetUserId);
+        let filteredMessages;
+        try {
+            filteredMessages = messages.filter(m => m.author.id === getUserId(args));
+        } catch (err) {
+            message.channel.send(`${message.author} ${err.message}`);
+            return;
+        }
 
         const lastMessage = filteredMessages.first();
         const newMessageParts = [];
         for (let i = 0; i < lastMessage.content.length; i++) {
-            if (lastMessage.content[i] == ' ') {
+            if (lastMessage.content[i] === ' ') {
                 newMessageParts.push('👏');
                 continue;
             }
@@ -69,6 +79,19 @@ function clap(message, args) {
 
         message.channel.send(lastMessage.author + ' ' + newMessageParts.join(''));
     });
+}
+
+const getUserId = (args) => {
+    let userId = null;
+    if (args.length) {
+        userId = args[0].replace(/[^0-9]/g, '');
+    }
+
+    if (!userId) {
+        throw new Error('No user id, or invalid user id provided');
+    }
+
+    return userId;
 }
 
 client.login(auth.token);
