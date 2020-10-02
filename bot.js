@@ -53,7 +53,9 @@ function mock(message, args) {
 }
 
 function clap(message, args) {
-  message.channel.fetchMessages()
+  message
+    .channel
+    .fetchMessages()
     .then(messages => {
       let filteredMessages
       try {
@@ -63,18 +65,9 @@ function clap(message, args) {
         return
       }
 
-      const lastMessage = filteredMessages.first()
-      const newMessageParts = []
-      for (let i = 0; i < lastMessage.content.length; i++) {
-        if (lastMessage.content[i] === ' ') {
-          newMessageParts.push('👏')
-          continue
-        }
+      const clapped = `👏 ${filteredMessages.first().content} 👏`.split(' ').reduce((string, word) => string + ' 👏 ' + word)
 
-        newMessageParts.push(lastMessage.content[i].toUpperCase())
-      }
-
-      message.channel.send(lastMessage.author + ' ' + newMessageParts.join(''))
+      message.channel.send(filteredMessages.first().author + ' ' + clapped)
     })
 }
 
