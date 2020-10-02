@@ -21,5 +21,5 @@ posted to the channel and it'll repost that message with a sprinkle of sarcasm.
 
 # Production setup
 Basically the same steps as dev setup minus running `npm start`.
-I'd recommend running this bot with some form of npm process manager in production, i use [PM2](http://pm2.keymetrics.io/)
-and it keeps everything ticking along nicely.
+I'd recommend running this bot with some form of npm process manager in production, I use [PM2](http://pm2.keymetrics.io/)
+and it keeps everything tickling along nicely.
