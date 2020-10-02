@@ -22,7 +22,7 @@ client.on('message', (message) => {
   }
 })
 
-function mock (message, args) {
+function mock(message, args) {
   message.channel.fetchMessages()
     .then(messages => {
       const targetUserId = args[0].replace(/[^0-9]/g, '')
@@ -41,7 +41,7 @@ function mock (message, args) {
     })
 }
 
-function clap (message, args) {
+function clap(message, args) {
   message.channel.fetchMessages()
     .then(messages => {
       const targetUserId = args[0].replace(/[^0-9]/g, '')
