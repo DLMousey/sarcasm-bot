@@ -33,22 +33,8 @@ function mock(message, args) {
         return
       }
 
-      const lastMessage = filteredMessages.first()
-      const newMessageParts = []
-      for (let i = 0; i < lastMessage.content.length; i++) {
-        if (lastMessage.content[i] === ' ') {
-          newMessageParts.push(' ')
-          continue
-        }
-
-        if (i % 2 === 0) {
-          newMessageParts.push(lastMessage.content[i].toUpperCase())
-        } else {
-          newMessageParts.push(lastMessage.content[i].toLowerCase())
-        }
-      }
-
-      message.channel.send(lastMessage.author + ' ' + newMessageParts.join(''))
+      const mocked = filteredMessages.first().content.split('').reduce((sentence, word, i) => i % 2 === 0 ? sentence + word : sentence + word.toUpperCase())
+      message.channel.send(filteredMessages.first().author + ' ' + mocked)
     })
 }
 
@@ -65,9 +51,8 @@ function clap(message, args) {
         return
       }
 
-      const clapped = `👏 ${filteredMessages.first().content} 👏`.split(' ').reduce((string, word) => string + ' 👏 ' + word)
-
-      message.channel.send(filteredMessages.first().author + ' ' + clapped)
+      const clapped = filteredMessages.first().content.split(' ').reduce((string, word) => string + ' 👏 ' + word)
+      message.channel.send(filteredMessages.first().author + ' ' + `👏 ${clapped} 👏`)
     })
 }
 
