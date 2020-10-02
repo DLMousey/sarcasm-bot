@@ -4,11 +4,20 @@
     "description": "A Discord bot that adds sArCaSm to messages in the channel",
     "main": "bot.js",
     "author": "Tom 'Mousey' Lovelady <tom@deadlyllama.com>",
-    "scripts": {
-        "start": "node bot.js"
-    },
     "dependencies": {
         "discord.js": "^11.4.2",
         "winston": "^3.1.0"
+    },
+    "scripts": {
+        "start": "node bot.js",
+        "eslint": "node node_modules/eslint/bin/eslint.js --fix"
+    },
+    "devDependencies": {
+        "eslint": "^7.10.0",
+        "eslint-config-standard": "^14.1.1",
+        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^4.2.1",
+        "eslint-plugin-standard": "^4.0.1"
     }
 }
