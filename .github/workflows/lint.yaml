@@ -8,11 +8,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Install eslint to Action environment
+        run: npm i -g eslint
+
       - name: Install dependencies
         run: npm install
 
-      - name: Run linters
-        uses: wearerequired/lint-action@v1
-        with:
-          github_token: ${{ secrets.github_token }}
-          eslint: true
+      - name: Run ESLint
+        run: eslint .
