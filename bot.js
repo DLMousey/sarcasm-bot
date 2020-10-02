@@ -25,16 +25,13 @@ client.on('message', (message) => {
 function mock(message, args) {
   message.channel.fetchMessages()
     .then(messages => {
-      let filteredMessages
-      try {
-        filteredMessages = messages.filter(m => m.author.id === getUserId(args))
-      } catch (err) {
-        message.channel.send(`${message.author} ${err.message}`)
-        return
-      }
+      const filteredMessages = getUserId(args)
+        .then((id) => messages.filter(m => m.author.id === id))
+        .catch((e) => message.channel.send(`${message.author} ${e.message}`))
 
       const lastMessage = filteredMessages.first()
       const newMessageParts = []
+
       for (let i = 0; i < lastMessage.content.length; i++) {
         if (lastMessage.content[i] === ' ') {
           newMessageParts.push(' ')
@@ -55,16 +52,13 @@ function mock(message, args) {
 function clap(message, args) {
   message.channel.fetchMessages()
     .then(messages => {
-      let filteredMessages
-      try {
-        filteredMessages = messages.filter(m => m.author.id === getUserId(args))
-      } catch (err) {
-        message.channel.send(`${message.author} ${err.message}`)
-        return
-      }
+      const filteredMessages = getUserId(args)
+        .then((id) => messages.filter(m => m.author.id === id))
+        .catch((e) => message.channel.send(`${message.author} ${e.message}`))
 
       const lastMessage = filteredMessages.first()
       const newMessageParts = []
+
       for (let i = 0; i < lastMessage.content.length; i++) {
         if (lastMessage.content[i] === ' ') {
           newMessageParts.push('👏')
@@ -79,16 +73,13 @@ function clap(message, args) {
 }
 
 const getUserId = (args) => {
-  let userId = null
-  if (args.length) {
-    userId = args[0].replace(/[^0-9]/g, '')
-  }
+  return new Promise((resolve, reject) => {
+    if (args.length) {
+      resolve(args[0].replace(/[^0-9]/g, ''))
+    }
 
-  if (!userId) {
-    throw new Error('No user id, or invalid user id provided')
-  }
-
-  return userId
+    reject(new Error('No user id, or invalid user id provided'))
+  })
 }
 
 client.login(auth.token)
