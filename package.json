@@ -10,7 +10,7 @@
     },
     "scripts": {
         "start": "node bot.js",
-        "eslint": "node node_modules/eslint/bin/eslint.js --fix"
+        "eslint": "node ./node_modules/eslint/bin/eslint.js ."
     },
     "devDependencies": {
         "eslint": "^7.10.0",
