@@ -33,7 +33,10 @@ function mock(message, args) {
         return
       }
 
-      const mocked = filteredMessages.first().content.split('').reduce((sentence, word, i) => i % 2 === 0 ? sentence + word : sentence + word.toUpperCase())
+      const letters = filteredMessages.first().content.split('')
+      const mocked = letters.reduce((sentence, word, i) => {
+        i % 2 === 0 ? sentence + word : sentence + word.toUpperCase()
+      })
       message.channel.send(filteredMessages.first().author + ' ' + mocked)
     })
 }
@@ -51,7 +54,8 @@ function clap(message, args) {
         return
       }
 
-      const clapped = filteredMessages.first().content.split(' ').reduce((string, word) => string + ' 👏 ' + word)
+      const words = filteredMessages.first().content.split(' ')
+      const clapped = words.reduce((string, word) => string + ' 👏 ' + word)
       message.channel.send(filteredMessages.first().author + ' ' + `👏 ${clapped} 👏`)
     })
 }
