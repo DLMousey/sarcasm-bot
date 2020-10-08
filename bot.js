@@ -16,7 +16,10 @@ client.on('message', (message) => {
       mock(message, args)
       break
     case 'clap':
-      clap(message, args)
+      replacer(message, args, ' ', '👏', true)
+      break
+    case 'b':
+      replacer(message, args, 'b', '🅱')
       break
     default:
   }
@@ -49,7 +52,7 @@ function mock(message, args) {
     })
 }
 
-function clap(message, args) {
+function replacer(message, args, from, to, caps = false) {
   message.channel.fetchMessages()
     .then(messages => {
       const filteredMessages = getUserId(args)
@@ -60,12 +63,12 @@ function clap(message, args) {
       const newMessageParts = []
 
       for (let i = 0; i < lastMessage.content.length; i++) {
-        if (lastMessage.content[i] === ' ') {
-          newMessageParts.push('👏')
+        if (lastMessage.content[i].toLowerCase() === from) {
+          newMessageParts.push(to)
           continue
         }
 
-        newMessageParts.push(lastMessage.content[i].toUpperCase())
+        newMessageParts.push(caps ? lastMessage.content[i].toUpperCase() : lastMessage.content[i])
       }
 
       message.channel.send(lastMessage.author + ' ' + newMessageParts.join(''))
