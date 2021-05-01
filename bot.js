@@ -124,19 +124,19 @@ function help(message) {
         },
         {
           name: 'Clap command',
-          value: '`!clap @user`',
+          value: '`!clap @user`'
         },
         {
           name: 'B command',
-          value: '`!b @user`',
+          value: '`!b @user`'
         },
         {
           name: 'Info command',
-          value: '`!info`',
+          value: '`!info`'
         },
         {
           name: 'Help command',
-          value: '`!help`',
+          value: '`!help`'
         }
       ]
     }
