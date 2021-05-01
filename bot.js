@@ -3,17 +3,8 @@ const auth = (process.env.BOT_TOKEN) ? { token: process.env.BOT_TOKEN } : requir
 const botConfig = (process.env.BOT_PREFIX) ? { prefix: process.env.BOT_PREFIX } : require('./bot.config.json')
 const client = new Discord.Client()
 
-if (process.env.BOT_TOKEN) {
-    console.log("Using auth token from environment");
-} else {
-    console.log("Using auth token from auth.json");
-}
-
-if (process.env.BOT_PREFIX) {
-    console.log("Using bot config from envirnoment");
-} else {
-    console.log("Using bot config from bot.config.json");
-}
+console.log((process.env.BOT_TOKEN) ? 'Auth token from environment' : 'Auth token from auth.json')
+console.log((process.env.BOT_PREFIX) ? 'Bot config from environment' : 'Bot config from bot.config.json')
 
 client.on('ready', () => console.log('Signed in, Ready to rock and roll'))
 
@@ -35,7 +26,7 @@ client.on('message', (message) => {
       break
     case 'info':
       info(message)
-      break;
+      break
     default:
   }
 })
@@ -97,28 +88,28 @@ function replacer(message, args, from, to, caps = false) {
 }
 
 function info(message) {
-    message.channel.send({
-        embed: {
-            color: 0x0099ff,
-            title: 'sArCaSm BoT',
-            url: 'https://github.com/dlmousey/sarcasm-bot',
-            author: {
-                name: 'DLMousey',
-                icon_url: 'https://cdn.discordapp.com/avatars/204254057202712576/5ed81c678acd658317bf31ab013e28de.webp?size=128',
-                url: 'https://github.com/dlmousey/sarcasm-bot'
-            },
-            description: 'An idea born of alcohol and lack of impulse control. \r\n May contain nuts.',
-            thumbnail: {
-                url: 'https://i.kym-cdn.com/entries/icons/original/000/022/940/mockingspongebobbb.jpg'
-            },
-            timestamp: new Date(),
-            footer: {
-                text: 'Now available in docker flavour, see repo',
-                icon: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
-                url: 'https://github.com/DLMousey/sarcasm-bot/compare'
-            }
-        }
-    });
+  message.channel.send({
+    embed: {
+      color: 0x0099ff,
+      title: 'sArCaSm BoT',
+      url: 'https://github.com/dlmousey/sarcasm-bot',
+      author: {
+        name: 'DLMousey',
+        icon_url: 'https://cdn.discordapp.com/avatars/204254057202712576/5ed81c678acd658317bf31ab013e28de.webp?size=128',
+        url: 'https://github.com/dlmousey/sarcasm-bot'
+      },
+      description: 'An idea born of alcohol and lack of impulse control. \r\n May contain nuts.',
+      thumbnail: {
+        url: 'https://i.kym-cdn.com/entries/icons/original/000/022/940/mockingspongebobbb.jpg'
+      },
+      timestamp: new Date(),
+      footer: {
+        text: 'Now available in docker flavour, see repo',
+        icon: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
+        url: 'https://github.com/DLMousey/sarcasm-bot/compare'
+      }
+    }
+  })
 }
 
 const getUserId = (args) => {
