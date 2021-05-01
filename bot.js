@@ -1,7 +1,19 @@
 const Discord = require('discord.js')
-const auth = require('./auth.json')
-const botConfig = require('./bot.config.json')
+const auth = (process.env.BOT_TOKEN) ? { token: process.env.BOT_TOKEN } : require('./auth.json')
+const botConfig = (process.env.BOT_PREFIX) ? { prefix: process.env.BOT_PREFIX } : require('./bot.config.json')
 const client = new Discord.Client()
+
+if (process.env.BOT_TOKEN) {
+    console.log("Using auth token from environment");
+} else {
+    console.log("Using auth token from auth.json");
+}
+
+if (process.env.BOT_PREFIX) {
+    console.log("Using bot config from envirnoment");
+} else {
+    console.log("Using bot config from bot.config.json");
+}
 
 client.on('ready', () => console.log('Signed in, Ready to rock and roll'))
 
