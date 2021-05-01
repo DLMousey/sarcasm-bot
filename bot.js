@@ -33,6 +33,9 @@ client.on('message', (message) => {
     case 'b':
       replacer(message, args, 'b', '🅱')
       break
+    case 'info':
+      info(message)
+      break;
     default:
   }
 })
@@ -91,6 +94,31 @@ function replacer(message, args, from, to, caps = false) {
 
       message.channel.send(lastMessage.author + ' ' + newMessageParts.join(''))
     })
+}
+
+function info(message) {
+    message.channel.send({
+        embed: {
+            color: 0x0099ff,
+            title: 'sArCaSm BoT',
+            url: 'https://github.com/dlmousey/sarcasm-bot',
+            author: {
+                name: 'DLMousey',
+                icon_url: 'https://cdn.discordapp.com/avatars/204254057202712576/5ed81c678acd658317bf31ab013e28de.webp?size=128',
+                url: 'https://github.com/dlmousey/sarcasm-bot'
+            },
+            description: 'An idea born of alcohol and lack of impulse control. \r\n May contain nuts.',
+            thumbnail: {
+                url: 'https://i.kym-cdn.com/entries/icons/original/000/022/940/mockingspongebobbb.jpg'
+            },
+            timestamp: new Date(),
+            footer: {
+                text: 'Now available in docker flavour, see repo',
+                icon: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
+                url: 'https://github.com/DLMousey/sarcasm-bot/compare'
+            }
+        }
+    });
 }
 
 const getUserId = (args) => {
