@@ -27,7 +27,11 @@ client.on('message', (message) => {
     case 'info':
       info(message)
       break
+    case 'help':
+      help(message)
+      break
     default:
+      message.channel.send('Invalid command provided - run `!help` for a list')
   }
 })
 
@@ -102,6 +106,39 @@ function info(message) {
         icon: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
         url: 'https://github.com/DLMousey/sarcasm-bot/compare'
       }
+    }
+  })
+}
+
+function help(message) {
+  message.channel.send({
+    embed: {
+      color: 0x0099ff,
+      title: 'nEeD sOmE hElP?',
+      description: 'Available commands - All `@`s _must_ be mentions.',
+      fields: [
+        {
+          name: 'Mock command',
+          value: '`!mock @user`',
+          inline: true
+        },
+        {
+          name: 'Clap command',
+          value: '`!clap @user`',
+        },
+        {
+          name: 'B command',
+          value: '`!b @user`',
+        },
+        {
+          name: 'Info command',
+          value: '`!info`',
+        },
+        {
+          name: 'Help command',
+          value: '`!help`',
+        }
+      ]
     }
   })
 }
