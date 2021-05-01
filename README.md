@@ -20,7 +20,25 @@ posted to the channel and it'll repost that message with a sprinkle of sarcasm.
 - run `npm start`
 
 # Production setup
-Use the same steps as dev setup minus running `npm start`.
-I'd recommend running this bot with some form of npm process manager in production.
-and it keeps everything ticking along nicely.
-Recommened process manager: [PM2](http://pm2.keymetrics.io/)
+
+Support has been added for running this via docker, strongly recommended for your sanity because nobody
+wants to babysit a process running in PM2 anymore - let docker handle it. You could also throw it into k8s
+this way if you're so inclined.
+
+To run this via docker;
+```
+docker run -d -e BOT_TOKEN=YourAuthTokenHere -e BOT_PREFIX=! docker.pkg.github.com/dlmousey/sarcasm-bot/sarcasm-bot:latest
+```
+
+To run via docker-compose;
+```yml
+services:
+  sarcasm:
+    image: docker.pkg.github.com/dlmousey/sarcasm-bot/sarcasm-bot:latest
+    environment:
+      - BOT_TOKEN=YourAuthTokenHere
+      - BOT_PREFIX=!
+```
+
+If either environment variable is missing the bot will fall back to attempting to load them from 
+`auth.json` and `bot.config.json`, neither of which are included in the docker image so that will fail.
