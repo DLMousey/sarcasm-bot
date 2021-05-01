@@ -16,7 +16,7 @@ jobs:
         uses: docker/build-push-action@v1
         with:
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.PACKAGES_PAT }}
           registry: docker.pkg.github.com
           repository: dlmousey/sarcasm-bot/sarcasm-bot
           tag_with_Ref: true
