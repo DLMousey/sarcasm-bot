@@ -155,7 +155,7 @@ const getUserId = (args) => {
     userId = args[0].replace(/[^0-9]/g, '')
   }
 
-  if (!userId) {
+  if (!userId || args[0].length > 18) {
     throw new Error('No user id, or invalid user id provided')
   }
 
