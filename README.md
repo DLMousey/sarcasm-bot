@@ -40,5 +40,14 @@ services:
       - BOT_PREFIX=!
 ```
 
-If either environment variable is missing the bot will fall back to attempting to load them from 
+## Supported environment variables
+The bot's behaviour can be tweaked by setting environment variables when you run the docker image
+
+| Key | Description | Required | Default |
+| --- | ----------- | -------- | ------- |
+| BOT_TOKEN | Auth token used to authenticate the bot with discord | Yes | n/a |
+| BOT_PREFIX | The character used to denote a command (eg. `!mock`) | Yes | `!` |
+| BOT_RATELIMIT | The amount of time users must wait between commands | No | 3 |
+
+If either required environment variable is missing the bot will fall back to attempting to load them from 
 `auth.json` and `bot.config.json`, neither of which are included in the docker image so that will fail.
