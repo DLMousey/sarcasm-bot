@@ -3,6 +3,8 @@ const auth = (process.env.BOT_TOKEN) ? { token: process.env.BOT_TOKEN } : requir
 const botConfig = (process.env.BOT_PREFIX) ? { prefix: process.env.BOT_PREFIX } : require('./bot.config.json')
 const client = new Discord.Client()
 
+const useMap = {};
+
 console.log((process.env.BOT_TOKEN) ? 'Auth token from environment' : 'Auth token from auth.json')
 console.log((process.env.BOT_PREFIX) ? 'Bot config from environment' : 'Bot config from bot.config.json')
 
@@ -13,6 +15,22 @@ client.on('message', (message) => {
 
   const args = message.content.slice(botConfig.prefix.length).trim().split(/ +/g)
   const command = args.shift().toLowerCase()
+
+  if (useMap.hasOwnProperty(message.author.id)) {
+    const lastUse = new Date(useMap[message.author.id]);
+    const now = (new Date()).getTime();
+
+    const diffTime = Math.abs(lastUse.getTime() - now);
+    const diffSeconds = Math.trunc(diffTime / 1000);
+
+    const rateLimit = (process.env.BOT_RATELIMIT) ? process.env.BOT_RATELIMIT : 3;
+    if (diffSeconds <= rateLimit) {
+      console.log(`[ABUSE DETECTION] ${message.author.username} - ${diffSeconds} seconds since last call`);
+      return;
+    }
+  }
+
+  useMap[message.author.id] = Date.now();
 
   switch (command) {
     case 'mock':
@@ -47,6 +65,11 @@ function mock(message, args) {
       }
 
       const lastMessage = filteredMessages.first()
+      if (!lastMessage) {
+        message.channel.send(`${message.author} No user id, or invalid user id provided`);
+        return;
+      }
+
       const newMessageParts = []
       for (let i = 0; i < lastMessage.content.length; i++) {
         if (lastMessage.content[i] === ' ') {
@@ -77,6 +100,11 @@ function replacer(message, args, from, to, caps = false) {
       }
 
       const lastMessage = filteredMessages.first()
+      if (!lastMessage) {
+        message.channel.send(`${message.author} No user id, or invalid user id provided`);
+        return;
+      }
+
       const newMessageParts = []
       for (let i = 0; i < lastMessage.content.length; i++) {
         if (lastMessage.content[i].toLowerCase() === from) {
@@ -151,12 +179,13 @@ function help(message) {
 
 const getUserId = (args) => {
   let userId = null
+
   if (args.length) {
     userId = args[0].replace(/[^0-9]/g, '')
   }
 
-  if (!userId || args[0].length > 18) {
-    throw new Error('No user id, or invalid user id provided')
+  if (userId.length !== 18) {
+    throw new Error('No user id, or invalid user id provided');
   }
 
   return userId
