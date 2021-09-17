@@ -48,6 +48,8 @@ client.on('message', (message) => {
     case 'help':
       help(message)
       break
+    case 'imagine':
+      break
     default:
       message.channel.send('Invalid command provided - run `!help` for a list')
   }
