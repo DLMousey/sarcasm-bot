@@ -36,6 +36,11 @@ client.on('message', (message) => {
     case 'mock':
       mock(message, args)
       break
+    case 'mocksingle':
+    case 'mockSingle':
+    case 'mockone':
+      mockSingle(message, args)
+      break
     case 'clap':
       replacer(message, args, ' ', '👏', true)
       break
@@ -54,6 +59,27 @@ client.on('message', (message) => {
       message.channel.send('Invalid command provided - run `!help` for a list')
   }
 })
+
+function mockSingle(message, args) {
+  message.channel.fetchMessage(args[0])
+    .then(message => {
+      const newMessageParts = []
+      for (let i = 0; i < message.content.length; i++) {
+        if (message.content[i] === ' ') {
+          newMessageParts.push(' ')
+          continue
+        }
+
+        if (i % 2 === 0) {
+          newMessageParts.push(message.content[i].toUpperCase())
+        } else {
+          newMessageParts.push(message.content[i].toLowerCase())
+        }
+      }
+
+      message.channel.send(newMessageParts.join(''))
+    })
+}
 
 function mock(message, args) {
   message.channel.fetchMessages()
@@ -156,6 +182,11 @@ function help(message) {
         {
           name: 'Mock command',
           value: '`!mock @user`',
+          inline: true
+        },
+        {
+          name: 'Mock single message',
+          value: '!mockSingle <messageId> || !mocksingle <messageId> || !mockOne <messageId>',
           inline: true
         },
         {
