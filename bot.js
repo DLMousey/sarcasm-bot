@@ -81,16 +81,42 @@ function mockSingle(message, args) {
     })
 }
 
+function mockInline(message, args) {
+  const newMessageParts = []
+  const content = args.join(' ')
+
+  for (let i = 0; i < content.length; i++) {
+    if (content[i] === ' ') {
+      newMessageParts.push(' ')
+      continue
+    }
+
+    if (i % 2 === 0) {
+      newMessageParts.push(content[i].toUpperCase())
+    } else {
+      newMessageParts.push(content[i].toLowerCase())
+    }
+  }
+
+  message.channel.send(newMessageParts.join(''))
+}
+
 function mock(message, args) {
+  let authorId
+
+  try {
+    authorId = getUserId(args)
+  } catch {
+    // user id not detected, assume it's supposed to be an inline mockery - delete
+    // original message and mock the content
+    message.delete()
+    mockInline(message, args)
+    return
+  }
+
   message.channel.fetchMessages()
     .then(messages => {
-      let filteredMessages
-      try {
-        filteredMessages = messages.filter(m => m.author.id === getUserId(args))
-      } catch (err) {
-        message.channel.send(`${message.author} ${err.message}`)
-        return
-      }
+      const filteredMessages = messages.filter(m => m.author.id === authorId)
 
       const lastMessage = filteredMessages.first()
       if (!lastMessage) {
@@ -213,7 +239,7 @@ function help(message) {
 const getUserId = (args) => {
   let userId = null
 
-  if (args.length) {
+  if (args.length === 1) {
     userId = args[0].replace(/[^0-9]/g, '')
   }
 
