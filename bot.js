@@ -60,21 +60,21 @@ client.on('message', (message) => {
   }
 })
 
-function alternate_case (text) {
+function alternateCase(text) {
   return text.split('').map((char, idx) =>
-      idx&1 ? char.toLowerCase() : char.toUpperCase()
-  ).join('');
+    idx & 1 ? char.toLowerCase() : char.toUpperCase()
+  ).join('')
 }
 
 function mockSingle(message, args) {
   message.channel.fetchMessage(args[0])
     .then(message => {
-      message.channel.send(alternate_case(message.content))
+      message.channel.send(alternateCase(message.content))
     })
 }
 
 function mockInline(message, args) {
-  message.channel.send(alternate_case(args.join(' ')))
+  message.channel.send(alternateCase(args.join(' ')))
 }
 
 function mock(message, args) {
@@ -100,7 +100,7 @@ function mock(message, args) {
         return
       }
 
-      message.channel.send(lastMessage.author + ' ' + alternate_case(lastMessage.content))
+      message.channel.send(lastMessage.author + ' ' + alternateCase(lastMessage.content))
     })
 }
 
@@ -121,7 +121,7 @@ function replacer(message, args, from, to, caps = false) {
         return
       }
 
-      message.channel.send(lastMessage.author + ' ' + alternate_case(lastMessage.content))
+      message.channel.send(lastMessage.author + ' ' + alternateCase(lastMessage.content))
     })
 }
 
