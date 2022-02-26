@@ -60,45 +60,21 @@ client.on('message', (message) => {
   }
 })
 
+function alternate_case (text) {
+  return text.split('').map((char, idx) =>
+      idx&1 ? char.toLowerCase() : char.toUpperCase()
+  ).join('');
+}
+
 function mockSingle(message, args) {
   message.channel.fetchMessage(args[0])
     .then(message => {
-      const newMessageParts = []
-      for (let i = 0; i < message.content.length; i++) {
-        if (message.content[i] === ' ') {
-          newMessageParts.push(' ')
-          continue
-        }
-
-        if (i % 2 === 0) {
-          newMessageParts.push(message.content[i].toUpperCase())
-        } else {
-          newMessageParts.push(message.content[i].toLowerCase())
-        }
-      }
-
-      message.channel.send(newMessageParts.join(''))
+      message.channel.send(alternate_case(message.content))
     })
 }
 
 function mockInline(message, args) {
-  const newMessageParts = []
-  const content = args.join(' ')
-
-  for (let i = 0; i < content.length; i++) {
-    if (content[i] === ' ') {
-      newMessageParts.push(' ')
-      continue
-    }
-
-    if (i % 2 === 0) {
-      newMessageParts.push(content[i].toUpperCase())
-    } else {
-      newMessageParts.push(content[i].toLowerCase())
-    }
-  }
-
-  message.channel.send(newMessageParts.join(''))
+  message.channel.send(alternate_case(args.join(' ')))
 }
 
 function mock(message, args) {
@@ -124,21 +100,7 @@ function mock(message, args) {
         return
       }
 
-      const newMessageParts = []
-      for (let i = 0; i < lastMessage.content.length; i++) {
-        if (lastMessage.content[i] === ' ') {
-          newMessageParts.push(' ')
-          continue
-        }
-
-        if (i % 2 === 0) {
-          newMessageParts.push(lastMessage.content[i].toUpperCase())
-        } else {
-          newMessageParts.push(lastMessage.content[i].toLowerCase())
-        }
-      }
-
-      message.channel.send(lastMessage.author + ' ' + newMessageParts.join(''))
+      message.channel.send(lastMessage.author + ' ' + alternate_case(lastMessage.content))
     })
 }
 
@@ -159,17 +121,7 @@ function replacer(message, args, from, to, caps = false) {
         return
       }
 
-      const newMessageParts = []
-      for (let i = 0; i < lastMessage.content.length; i++) {
-        if (lastMessage.content[i].toLowerCase() === from) {
-          newMessageParts.push(to)
-          continue
-        }
-
-        newMessageParts.push(caps ? lastMessage.content[i].toUpperCase() : lastMessage.content[i])
-      }
-
-      message.channel.send(lastMessage.author + ' ' + newMessageParts.join(''))
+      message.channel.send(lastMessage.author + ' ' + alternate_case(lastMessage.content))
     })
 }
 
