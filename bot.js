@@ -1,16 +1,34 @@
-const Discord = require('discord.js')
+import {Client, EmbedBuilder, Events, GatewayIntentBits} from "discord.js"
+import {openDb} from "./utils/openDb.js"
+import {mock} from "./commands/mock.js"
+import {info} from "./commands/info.js";
+import {audit} from "./commands/audit.js";
+import {help} from "./commands/help.js";
+import {alternateCase} from "./utils/alternateCase.js";
+import {activityLog} from "./utils/activityLog.js"
+
 const auth = (process.env.BOT_TOKEN) ? { token: process.env.BOT_TOKEN } : require('./auth.json')
 const botConfig = (process.env.BOT_PREFIX) ? { prefix: process.env.BOT_PREFIX } : require('./bot.config.json')
-const client = new Discord.Client()
+
+const client = new Client({ intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers
+]})
 
 const useMap = {}
 
 console.log((process.env.BOT_TOKEN) ? 'Auth token from environment' : 'Auth token from auth.json')
 console.log((process.env.BOT_PREFIX) ? 'Bot config from environment' : 'Bot config from bot.config.json')
+console.log((process.env.BOT_PREFIX))
 
-client.on('ready', () => console.log('Signed in, Ready to rock and roll'))
+client.once(Events.ClientReady, c => {
+  openDb(true).then()
+  console.log(`sIgNeD iN tO dIsCoRd As ${c.user.tag}`)
+} )
 
-client.on('message', (message) => {
+client.on(Events.MessageCreate, (message) => {
   if (!message.content.startsWith(botConfig.prefix) || message.author.bot) { return }
 
   const args = message.content.slice(botConfig.prefix.length).trim().split(/ +/g)
@@ -36,170 +54,27 @@ client.on('message', (message) => {
     case 'mock':
       mock(message, args)
       break
-    case 'mocksingle':
-    case 'mockSingle':
-    case 'mockone':
-      mockSingle(message, args)
-      break
-    case 'clap':
-      replacer(message, args, ' ', '👏', true)
-      break
-    case 'b':
-      replacer(message, args, 'b', '🅱')
+    case 'mockid':
+      message.channel.fetch().then(channel => {
+        channel.messages.fetch(args[0]).then(targetMessage => {
+          message.delete()
+          channel.send(alternateCase(targetMessage.content)).then(output => {
+            activityLog(message.author.id, message.content, output.id).catch(err => console.error(err))
+          })
+        })
+      })
       break
     case 'info':
-      info(message)
+      info(message, args)
       break
     case 'help':
-      help(message)
-      break
-    case 'imagine':
+      help(message, args)
+    case 'audit':
+      audit(message, args)
       break
     default:
       message.channel.send('Invalid command provided - run `!help` for a list')
   }
 })
-
-function alternateCase(text) {
-  return text.split('').map((char, idx) =>
-    idx & 1 ? char.toLowerCase() : char.toUpperCase()
-  ).join('')
-}
-
-function mockSingle(message, args) {
-  message.channel.fetchMessage(args[0])
-    .then(message => {
-      message.channel.send(alternateCase(message.content))
-    })
-}
-
-function mockInline(message, args) {
-  message.channel.send(alternateCase(args.join(' ')))
-}
-
-function mock(message, args) {
-  let authorId
-
-  try {
-    authorId = getUserId(args)
-  } catch {
-    // user id not detected, assume it's supposed to be an inline mockery - delete
-    // original message and mock the content
-    message.delete()
-    mockInline(message, args)
-    return
-  }
-
-  message.channel.fetchMessages()
-    .then(messages => {
-      const filteredMessages = messages.filter(m => m.author.id === authorId)
-
-      const lastMessage = filteredMessages.first()
-      if (!lastMessage) {
-        message.channel.send(`${message.author} No user id, or invalid user id provided`)
-        return
-      }
-
-      message.channel.send(lastMessage.author + ' ' + alternateCase(lastMessage.content))
-    })
-}
-
-function replacer(message, args, from, to, caps = false) {
-  message.channel.fetchMessages()
-    .then(messages => {
-      let filteredMessages
-      try {
-        filteredMessages = messages.filter(m => m.author.id === getUserId(args))
-      } catch (err) {
-        message.channel.send(`${message.author} ${err.message}`)
-        return
-      }
-
-      const lastMessage = filteredMessages.first()
-      if (!lastMessage) {
-        message.channel.send(`${message.author} No user id, or invalid user id provided`)
-        return
-      }
-
-      message.channel.send(lastMessage.author + ' ' + alternateCase(lastMessage.content))
-    })
-}
-
-function info(message) {
-  message.channel.send({
-    embed: {
-      color: 0x0099ff,
-      title: 'sArCaSm BoT',
-      url: 'https://github.com/dlmousey/sarcasm-bot',
-      author: {
-        name: 'DLMousey',
-        icon_url: 'https://cdn.discordapp.com/avatars/204254057202712576/5ed81c678acd658317bf31ab013e28de.webp?size=128',
-        url: 'https://github.com/dlmousey/sarcasm-bot'
-      },
-      description: 'An idea born of alcohol and lack of impulse control. \r\n May contain nuts.',
-      thumbnail: {
-        url: 'https://i.kym-cdn.com/entries/icons/original/000/022/940/mockingspongebobbb.jpg'
-      },
-      timestamp: new Date(),
-      footer: {
-        text: 'Now available in docker flavour, see repo',
-        icon: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
-        url: 'https://github.com/DLMousey/sarcasm-bot/compare'
-      }
-    }
-  })
-}
-
-function help(message) {
-  message.channel.send({
-    embed: {
-      color: 0x0099ff,
-      title: 'nEeD sOmE hElP?',
-      description: 'Available commands - All `@`s _must_ be mentions.',
-      fields: [
-        {
-          name: 'Mock command',
-          value: '`!mock @user`',
-          inline: true
-        },
-        {
-          name: 'Mock single message',
-          value: '!mockSingle <messageId> || !mocksingle <messageId> || !mockOne <messageId>',
-          inline: true
-        },
-        {
-          name: 'Clap command',
-          value: '`!clap @user`'
-        },
-        {
-          name: 'B command',
-          value: '`!b @user`'
-        },
-        {
-          name: 'Info command',
-          value: '`!info`'
-        },
-        {
-          name: 'Help command',
-          value: '`!help`'
-        }
-      ]
-    }
-  })
-}
-
-const getUserId = (args) => {
-  let userId = null
-
-  if (args.length === 1) {
-    userId = args[0].replace(/[^0-9]/g, '')
-  }
-
-  if (userId.length !== 18) {
-    throw new Error('No user id, or invalid user id provided')
-  }
-
-  return userId
-}
 
 client.login(auth.token)
